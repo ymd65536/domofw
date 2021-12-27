@@ -1,4 +1,4 @@
-import sys
+
 import os
 from domofw import get_token as token
 from domofw import create_stream as cr
@@ -15,15 +15,13 @@ domo_config = {
 # 証明書の参照先を変更
 os.environ['REQUESTS_CA_BUNDLE']='D:\\py_env\\domo.pem'
 
-if __name__=='__main__':
-  # カレントディレクトリを取得
-  cur_dir = os.getcwd()
-  schema_file = cur_dir + "\\csv\\" + "data_schema.csv"
+def create_data_provider(access_token, schema_file, output_enc, name, description):
 
   # CSVファイルを読み込む
   csv_file = open(schema_file,mode='r',encoding='utf-8')
   head_line = csv_file.readlines()
 
+  # データセットのヘッダを作成
   head_line_1 = head_line[0].split(",")
   head_line_2 = head_line[1].split(",")
   len_head = len(head_line_2)
@@ -42,21 +40,24 @@ if __name__=='__main__':
   csv_file.close
   head_schema = ','.join(head)
 
-  output_file = open(cur_dir + '\\schema_file.csv',mode='w',encoding='utf-8')
+  # 完成したデータセットのヘッダを出力
+  output_file = open(cur_dir + '\\csv\\' + name +'_schema_file.csv',mode='w',encoding=output_enc)
   output_file.write(head_schema)
   output_file.close
 
   # ヘッダをjsonに変換
   head_json = {}
   head_columns = []
+
   # データセットのスキーマを定義
   dataSet_schema = {'dataSet':{}}
-  dataSet_schema['dataSet']['name'] = 'test'
-  dataSet_schema['dataSet']['description'] = 'test'
+  dataSet_schema['dataSet']['name'] = name
+  dataSet_schema['dataSet']['description'] = description
   dataSet_schema['dataSet']['rows'] = 0
   # dataSet_schema['updateMethod'] = 'APPEND'
   dataSet_schema['updateMethod'] = 'REPLACE'
 
+  # データセットのヘッダからスキーマを定義
   for head_tmp in head:
     head_json['type'] = 'STRING'
     column_name = head_tmp
@@ -74,14 +75,28 @@ if __name__=='__main__':
   post_schema_str = str(dataSet_schema)
   post_schema_data = post_schema_str.replace("\'","\"")
 
-  output_file = open(cur_dir + '\\schema_json_file.json',mode='w',encoding='utf-8')
+  # DOMOにリクエストするデータセットのスキーマを出力
+  output_file = open(cur_dir + '\\json\\'+ name +'_schema_json_file.json',mode='w',encoding=output_enc)
   output_file.write(post_schema_data)
   output_file.close
 
   # APIを実行
-  access_token = token.get_access_token_proc(domo_config,PROXY_INFO)
   res = cr.create_stream_append(access_token,post_schema_data,PROXY_INFO)
 
-  output_file = open(cur_dir + '\\dataSet_id\\{0}.json'.format(res['dataSet']['id']),mode='w',encoding='utf-8')
+  # APIの実行結果をdataSetidを名前にしてjsonで保存
+  output_file = open(cur_dir + '\\dataSet_id\\{0}.json'.format(res['dataSet']['id']),mode='w',encoding=output_enc)
   output_file.write(str(res).replace("\'","\"").replace("False","false"))
   output_file.close
+
+if __name__=='__main__':
+
+  # カレントディレクトリを取得
+  cur_dir = os.getcwd()
+  # スキーマを定義したCSVファイル(ヘッダ情報)
+  schema_file = cur_dir + "\\csv\\" + "data_schema.csv"
+
+  # アクセストークンを取得
+  access_token = token.get_access_token_proc(domo_config,PROXY_INFO)
+
+  # test.csv のデータセットスキーマ
+  create_data_provider(access_token,schema_file,'utf-8','dataSet_Name','データセットの説明')
