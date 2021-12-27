@@ -1,0 +1,24 @@
+{
+  "dataSet": {
+    "name": "dataSet_Name",
+    "description": "データセットの説明",
+    "rows": 0,
+    "schema": {
+      "columns": [
+        {
+          "type": "STRING",
+          "name": "AA_0"
+        },
+        {
+          "type": "STRING",
+          "name": "BB_1"
+        },
+        {
+          "type": "STRING",
+          "name": "CC_2"
+        }
+      ]
+    }
+  },
+  "updateMethod": "REPLACE"
+}

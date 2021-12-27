@@ -1,0 +1,20 @@
+{
+  "id": 7742,
+  "dataSet": {
+    "id": "758c0790-f1d1-4bdd-a6c3-7f745f51cafc",
+    "name": "dataSet_Name",
+    "description": "データセットの説明",
+    "rows": 0,
+    "columns": 0,
+    "owner": {
+      "id": 1852541832,
+      "name": "名前"
+    },
+    "createdAt": "2021-12-27T09:47:13Z",
+    "updatedAt": "2021-12-27T09:47:14Z",
+    "pdpEnabled": false
+  },
+  "updateMethod": "REPLACE",
+  "createdAt": "2021-12-27T09:47:14Z",
+  "modifiedAt": "2021-12-27T09:47:14Z"
+}
